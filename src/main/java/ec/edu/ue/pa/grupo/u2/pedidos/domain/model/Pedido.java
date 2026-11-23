@@ -24,8 +24,15 @@ public class Pedido {
  
     @Column (name = "pedd_precio") //nombre de la columna en la base de datos
     private Double precio;
+
+    
  
  
+    @Override
+    public String toString() {
+        return "Pedido [id=" + id + ", producto=" + producto + ", precio=" + precio + "]";
+    }
+
     public Pedido() {
     }
  
