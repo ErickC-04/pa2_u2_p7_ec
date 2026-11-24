@@ -1,6 +1,8 @@
 
 package ec.edu.ue.pa.grupo.u2;
 
+import java.util.Optional;
+
 import ec.edu.ue.pa.grupo.u2.pedidos.application.PedidoService;
 import ec.edu.ue.pa.grupo.u2.pedidos.domain.model.Pedido;
 import io.quarkus.runtime.Quarkus;
@@ -14,47 +16,54 @@ public class Main implements QuarkusApplication {
     @Inject
     private PedidoService pedidoService;
 
-    public static void main(final String[] args) {
+    public static void main(String[] args) {
         Quarkus.run(Main.class, args);
     }
 
     @Override
     public int run(String... args) throws Exception {
 
-        System.out.println("Hello Quarkus!");
+        System.out.println("========== CREATE ==========");
 
         // CREATE
-        Pedido pedido = new Pedido();
-        pedido.setProducto("Producto de prueba");
-        pedido.setPrecio(100.0);
+        Pedido pedido2 = new Pedido();
 
-        this.pedidoService.guardar(pedido);
+        pedido2.setNumero("PED-001");
+        pedido2.setProducto("Laptop");
+        pedido2.setPrecio(850.00);
 
-        System.out.println("Pedido guardado: " + pedido);
+        pedidoService.guardar(pedido2);
 
-        // READ
-        Pedido pedido2 = this.pedidoService.buscarPorId(pedido.getId());
+        System.out.println("Pedido guardado: " + pedido2);
 
-        if (pedido2 != null) {
-            System.out.println("Pedido encontrado: " + pedido2);
+        // READ (BUSCAR POR ID)
+        System.out.println("\n========== READ POR ID ==========");
 
-            // UPDATE
-            System.out.println("Valor anterior: " + pedido2.getPrecio());
+        Optional<Pedido> pedido = pedidoService.buscarPorId(pedido2.getId());
 
-            pedido2.setPrecio(200.0);
-            this.pedidoService.actualizar(pedido2);
-
-            Pedido pedido3 = this.pedidoService.buscarPorId(pedido2.getId());
-            System.out.println("Pedido actualizado: " + pedido3);
-
-            // DELETE
-            this.pedidoService.eliminar(pedido2.getId());
-
-            System.out.println("Pedido eliminado correctamente.");
-
+        if (pedido.isPresent()) {
+            System.out.println("Pedido encontrado: " + pedido.get());
         } else {
-            System.out.println("No se encontró el pedido.");
+            System.out.println("Pedido no encontrado");
         }
+
+        // READ BY NUMBER
+        System.out.println("\n========== READ BY NUMBER ==========");
+
+        Optional<Pedido> pedidoByNumber =
+                pedidoService.buscarPorNumero("PED-001");
+
+        if (pedidoByNumber.isPresent()) {
+            System.out.println("Pedido encontrado por numero: "
+                    + pedidoByNumber.get());
+        } else {
+            System.out.println("Pedido no encontrado por numero");
+        }
+
+        // JPQL
+        System.out.println("\nJPQL: consultas orientadas a objetos");
+
+        System.out.println("\n========== FIN DEL PROGRAMA ==========");
 
         return 0;
     }
