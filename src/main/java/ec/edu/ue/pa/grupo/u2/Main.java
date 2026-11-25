@@ -1,9 +1,18 @@
-
 package ec.edu.ue.pa.grupo.u2;
-
 import ec.edu.ue.pa.grupo.u2.pedidos.application.PedidoService;
+import ec.edu.ue.pa.grupo.u2.pedidos.application.ClienteService;
+import ec.edu.ue.pa.grupo.u2.pedidos.application.CategoriaService;
+import ec.edu.ue.pa.grupo.u2.pedidos.application.ProductoService;
+import ec.edu.ue.pa.grupo.u2.pedidos.application.PagoService;
+import ec.edu.ue.pa.grupo.u2.pedidos.application.EnvioService;
+
 import ec.edu.ue.pa.grupo.u2.pedidos.domain.model.Pedido;
-import io.quarkus.runtime.Quarkus;
+import ec.edu.ue.pa.grupo.u2.pedidos.domain.model.Cliente;
+import ec.edu.ue.pa.grupo.u2.pedidos.domain.model.Categoria;
+import ec.edu.ue.pa.grupo.u2.pedidos.domain.model.Producto;
+import ec.edu.ue.pa.grupo.u2.pedidos.domain.model.Pago;
+import ec.edu.ue.pa.grupo.u2.pedidos.domain.model.Envio;
+
 import io.quarkus.runtime.QuarkusApplication;
 import io.quarkus.runtime.annotations.QuarkusMain;
 import jakarta.inject.Inject;
@@ -14,47 +23,71 @@ public class Main implements QuarkusApplication {
     @Inject
     private PedidoService pedidoService;
 
-    public static void main(final String[] args) {
-        Quarkus.run(Main.class, args);
-    }
+    @Inject
+    private ClienteService clienteService;
+
+    @Inject
+    private CategoriaService categoriaService;
+
+    @Inject
+    private ProductoService productoService;
+
+    @Inject
+    private PagoService pagoService;
+
+    @Inject
+    private EnvioService envioService;
 
     @Override
     public int run(String... args) throws Exception {
 
-        System.out.println("Hello Quarkus!");
-
-        // CREATE
+        // Guardar pedido
         Pedido pedido = new Pedido();
-        pedido.setProducto("Producto de prueba");
-        pedido.setPrecio(100.0);
-
+        pedido.setProducto("Laptop");
+        pedido.setPrecio(850.0);
         this.pedidoService.guardar(pedido);
 
-        System.out.println("Pedido guardado: " + pedido);
+        // Guardar cliente
+        Cliente cliente = new Cliente();
+        cliente.setNombre("Juan");
+        cliente.setApellido("Perez");
+        cliente.setCorreo("juan@gmail.com");
+        cliente.setTelefono("0991234567");
+        this.clienteService.guardar(cliente);
 
-        // READ
-        Pedido pedido2 = this.pedidoService.buscarPorId(pedido.getId());
+        // Guardar categoria
+        Categoria categoria = new Categoria();
+        categoria.setNombre("Tecnologia");
+        categoria.setDescripcion("Productos tecnologicos");
+        categoria.setEstado("Activo");
+        categoria.setTipo("Electronica");
+        this.categoriaService.guardar(categoria);
 
-        if (pedido2 != null) {
-            System.out.println("Pedido encontrado: " + pedido2);
+        // Guardar producto
+        Producto producto = new Producto();
+        producto.setNombre("Laptop");
+        producto.setCategoria("Tecnologia");
+        producto.setPrecio(850.0);
+        producto.setStock(10);
+        this.productoService.guardar(producto);
 
-            // UPDATE
-            System.out.println("Valor anterior: " + pedido2.getPrecio());
+        // Guardar pago
+        Pago pago = new Pago();
+        pago.setPedidoId(pedido.getId());
+        pago.setMonto(850.0);
+        pago.setMetodoPago("Efectivo");
+        pago.setEstado("Pagado");
+        this.pagoService.guardar(pago);
 
-            pedido2.setPrecio(200.0);
-            this.pedidoService.actualizar(pedido2);
+        // Guardar envio
+        Envio envio = new Envio();
+        envio.setPedidoId(pedido.getId());
+        envio.setDireccion("Av. Amazonas");
+        envio.setCiudad("Quito");
+        envio.setEstado("Pendiente");
+        this.envioService.guardar(envio);
 
-            Pedido pedido3 = this.pedidoService.buscarPorId(pedido2.getId());
-            System.out.println("Pedido actualizado: " + pedido3);
-
-            // DELETE
-            this.pedidoService.eliminar(pedido2.getId());
-
-            System.out.println("Pedido eliminado correctamente.");
-
-        } else {
-            System.out.println("No se encontró el pedido.");
-        }
+        System.out.println("Todos los registros guardados correctamente");
 
         return 0;
     }
