@@ -1,5 +1,6 @@
 package ec.edu.ue.pa.grupo.u2.pedidos.application;
 
+import java.util.List;
 import java.util.Optional;
 
 import ec.edu.ue.pa.grupo.u2.pedidos.domain.model.Pedido;
@@ -11,28 +12,40 @@ import jakarta.transaction.Transactional;
 @ApplicationScoped
 @Transactional //
 public class PedidoService {
- 
+
     @Inject
     private PedidoRepository pedidoRepository;
- 
+
     public void guardar(Pedido pedido) {
         this.pedidoRepository.create(pedido);
     }
- 
+
     public Optional<Pedido> buscarPorId(Integer id) {
-       return this.pedidoRepository.read(id);
+        return this.pedidoRepository.read(id);
     }
- 
-     public Optional<Pedido> buscarPorNumero(String numero) {
-       return this.pedidoRepository.readByNumber(numero);
+
+    public List<Pedido> buscarTodo() {
+        return this.pedidoRepository.readAll();
     }
- 
+
+    public List<Pedido> buscarTodoNative() {
+        return this.pedidoRepository.readAllNative();
+    }
+
+    public Optional<Pedido> buscarPorNumero(String numero) {
+        return this.pedidoRepository.readByNumber(numero);
+    }
+
+    public Optional<Pedido> buscarPorNumeroNative(String numero) {
+        return this.pedidoRepository.readByNumberNative(numero);
+    }
+
     public void actualizar(Pedido pedido) {
         this.pedidoRepository.update(pedido);
     }
- 
+
     public void eliminar(Integer id) {
         this.pedidoRepository.delete(id);
     }
- 
+
 }
